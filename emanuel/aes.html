@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encrypt and Decrypt Image with AES-GCM</title>
+</head>
+<body>
+    <h1>Encrypt and Decrypt Image with AES-GCM</h1>
+    Llave: <input type="file" id="ecParamsFileInput" accept=".pem"> <br>
+    Imagen: <input type="file" id="imageInput" accept="image/*"><br><br>
+    <button onclick="encryptImageWithAES()">Cifrar imagen con AES-GCM</button>
+    <button onclick="decryptImageWithAES()">Descifrar imagen con AES-GCM</button>
+    <a id="downloadLink" style="display: none">Descargar imagen cifrada/descifrada</a>
+
+    <script>
+        async function encryptImageWithAES() {
+            await processImageWithAES(true);
+        }
+
+        async function decryptImageWithAES() {
+            await processImageWithAES(false);
+        }
+
+        async function processImageWithAES(isEncrypt) {
+            const ecParamsFileInput = document.getElementById('ecParamsFileInput');
+            const imageInput = document.getElementById('imageInput');
+            const downloadLink = document.getElementById('downloadLink');
+
+            const ecParamsFile = ecParamsFileInput.files[0];
+            const imageFile = imageInput.files[0];
+
+            if (!ecParamsFile || !imageFile) {
+                alert('Seleccione un archivo de parámetros EC y una imagen.');
+                return;
+            }
+
+            try {
+                // Leer el contenido del archivo de parámetros EC PEM
+                const ecParamsPEM = await readFileAsString(ecParamsFile);
+
+                // Obtener el contenido entre las líneas BEGIN y END
+                const match = /-----BEGIN EC PARAMETERS-----([\s\S]+?)-----END EC PARAMETERS-----/.exec(ecParamsPEM);
+
+                if (!match) {
+                    throw new Error('Formato de archivo de parámetros de clave incorrecto.');
+                }
+
+                // Eliminar espacios, retornos de carro y saltos de línea
+                const ecParamsString = match[1].replace(/\s/g, '');
+
+                console.log('Parámetros EC (Bytes):', hexToBytes(ecParamsString));
+
+                // Convertir la cadena de parámetros EC PEM a bytes
+                const ecParamsBytes = hexToBytes(ecParamsString);
+
+                console.log('Clave (Bytes):', ecParamsBytes);
+
+                // Generar una clave a partir de la clave
+                const key = await window.crypto.subtle.importKey('raw', ecParamsBytes, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+
+                console.log('Clave Importada:', key);
+
+                // Leer la imagen como un array de bytes
+                const imageArrayBuffer = await readFileAsArrayBuffer(imageFile);
+
+                console.log('Imagen (Bytes):', new Uint8Array(imageArrayBuffer));
+
+                let resultArrayBuffer;
+
+                if (isEncrypt) {
+                    // Generar un IV (Vector de Inicialización) aleatorio
+                    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+                    console.log('IV (Bytes):', iv);
+
+                    // Configurar los parámetros para la operación de cifrado
+                    const additionalData = new Uint8Array(0); // Datos adicionales para autenticación
+                    resultArrayBuffer = await window.crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData }, key, imageArrayBuffer);
+
+                    // Concatenar el IV a los datos cifrados
+                    resultArrayBuffer = new Uint8Array([...iv, ...new Uint8Array(resultArrayBuffer)]);
+                } else {
+                    // En el caso del descifrado, extraemos el IV de los primeros 12 bytes
+                    const iv = new Uint8Array(imageArrayBuffer.slice(0, 12));
+                    const encryptedData = imageArrayBuffer.slice(12);
+
+                    console.log('IV (Bytes):', iv);
+
+                    // Configurar los parámetros para la operación de descifrado
+                    const additionalData = new Uint8Array(0); // Datos adicionales para autenticación
+                    resultArrayBuffer = await window.crypto.subtle.decrypt({ name: 'AES-GCM', iv, additionalData }, key, encryptedData);
+                }
+
+                // Crear un Blob a partir de los datos cifrados o descifrados con el tipo de la imagen original
+                const resultBlob = new Blob([new Uint8Array(resultArrayBuffer)], { type: imageFile.type });
+
+                // Crear un enlace de descarga
+                const objectURL = URL.createObjectURL(resultBlob);
+                const operationName = isEncrypt ? 'encrypted' : 'decrypted';
+                downloadLink.href = objectURL;
+                downloadLink.download = `${operationName}_image_${imageFile.name}`;
+                downloadLink.style.display = 'block';
+
+                console.log(`Operación ${isEncrypt ? 'cifrado' : 'descifrado'} completada con éxito.`);
+
+            } catch (error) {
+                console.error('Error en la operación de', isEncrypt ? 'cifrado' : 'descifrado', ':', error);
+                alert(`Error al ${isEncrypt ? 'cifrar' : 'descifrar'} la imagen. Consulta la consola para más detalles.`);
+            }
+        }
+
+        async function readFileAsArrayBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        async function readFileAsString(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsText(file);
+            });
+        }
+
+        function hexToBytes(hex) {
+            return new Uint8Array(hex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+        }
+    </script>
+</body>
+</html>

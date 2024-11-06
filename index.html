@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  
+   <!-- CryptoJS -->
+   <script src="./js/CryptoJS/src/core.js"></script>
+   <script src="./js/CryptoJS/src/lib-typedarrays.js"></script>
+   <script src="./js/CryptoJS/src/x64-core.js"></script>
+   <script src="./js/CryptoJS/src/enc-utf16.js"></script>
+   <script src="./js/CryptoJS/src/enc-base64.js"></script>
+   <script src="./js/CryptoJS/src/enc-base64url.js"></script>
+   <script src="./js/CryptoJS/src/md5.js"></script>
+   <script src="./js/CryptoJS/src/sha1.js"></script>
+   <script src="./js/CryptoJS/src/sha256.js"></script>
+   <script src="./js/CryptoJS/src/sha224.js"></script>
+   <script src="./js/CryptoJS/src/sha512.js"></script>
+   <script src="./js/CryptoJS/src/sha384.js"></script>
+   <script src="./js/CryptoJS/src/sha3.js"></script>
+   <script src="./js/CryptoJS/src/ripemd160.js"></script>
+   <script src="./js/CryptoJS/src/hmac.js"></script>
+   <script src="./js/CryptoJS/src/pbkdf2.js"></script>
+   <script src="./js/CryptoJS/src/evpkdf.js"></script>
+   <script src="./js/CryptoJS/src/cipher-core.js"></script>
+   <script src="./js/CryptoJS/src/mode-cfb.js"></script>
+   <script src="./js/CryptoJS/src/mode-ctr.js"></script>
+   <script src="./js/CryptoJS/src/mode-ofb.js"></script>
+   <script src="./js/CryptoJS/src/mode-ecb.js"></script>
+   <script src="./js/CryptoJS/src/pad-ansix923.js"></script>
+   <script src="./js/CryptoJS/src/pad-iso10126.js"></script>
+   <script src="./js/CryptoJS/src/pad-zeropadding.js"></script>
+   <script src="./js/CryptoJS/src/pad-iso97971.js"></script>
+   <script src="./js/CryptoJS/src/pad-nopadding.js"></script>
+   <script src="./js/CryptoJS/src/rc4.js"></script>
+   <script src="./js/CryptoJS/src/rabbit.js"></script>
+   <script src="./js/CryptoJS/src/rabbit-legacy.js"></script>
+   <script src="./js/CryptoJS/src/aes.js"></script>
+   <script src="./js/CryptoJS/src/tripledes.js"></script>
+
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-800">
+  <div class="w-96 p-6 bg-white rounded shadow-md">
+    <h2 class="text-2xl font-semibold mb-6">Iniciar sesión</h2>
+    <form id="loginForm" action="./pages/chisme.php" method="post">
+
+
+      
+      
+      <div class="mb-4">
+        <label for="username" class="block mb-2">Usuario</label>
+        <input type="text" id="username" name="username" placeholder="Ingresa un usuario válido" title="Por favor ingresa un usuario válido (mínimo 4 caracteres)" minlength="4" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none" required>
+      </div>
+
+      <div class="mb-4">
+        <label for="password" class="block mb-2">Contraseña</label>
+        <input type="password" id="password" name="password"  title="Por favor ingrese su contraseña de al menos 8 caracteres" minlength="8" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none" placeholder="Mínimo 8 caracteres" required>
+      </div>
+      
+
+      <button type="submit" class="w-full bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600">Iniciar sesión</button>
+    </form>
+    <p class="mt-4">¿No tienes una cuenta? <a href="./pages/registro.html" class="text-blue-500">Regístrate</a></p>
+
+    <p class="mt-4">¿Olvidaste tu contraseña? <a href="./pages/solicitarestablecer.html" class="text-blue-500"> Restablecer contraseña</a></p>
+
+  </div>
+  <script src="./js/login.js" defer></script>
+</body>
+</html>

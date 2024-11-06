@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar y Descargar Claves ECDH</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/elliptic/6.5.3/elliptic.min.js"></script>
+</head>
+<body>
+    <script>
+        // Algoritmo de curva elíptica (ECDH)
+        const curveName = 'secp256k1';
+
+        // Crear instancia de la curva elíptica
+        const ec = new elliptic.ec(curveName);
+
+        // Generar un par de claves ECDH
+        const keyPair = ec.genKeyPair();
+
+        // Obtener la clave privada en formato PEM
+        const privateKeyPem = formatPEM('PRIVATE KEY', keyPair.getPrivate('hex'));
+
+        // Obtener la clave pública en formato PEM
+        const publicKeyPem = formatPEM('PUBLIC KEY', keyPair.getPublic('hex'));
+
+        // Función para dar formato PEM
+        function formatPEM(type, keyData) {
+            const header = `-----BEGIN ${type}-----`;
+            const footer = `-----END ${type}-----`;
+            const formattedKey = `${header}\n${keyData}\n${footer}`;
+            return formattedKey;
+        }
+
+        // Función para crear y simular clic en un enlace de descarga
+        function downloadKey(data, filename, label) {
+            const downloadLink = document.createElement('a');
+            downloadLink.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(data);
+            downloadLink.download = filename;
+            downloadLink.innerHTML = label;
+
+            // Agregar el enlace al cuerpo del documento
+            document.body.appendChild(downloadLink);
+
+            // Simular clic en el enlace
+            downloadLink.click();
+
+            // Eliminar el enlace después de la descarga
+            document.body.removeChild(downloadLink);
+        }
+
+        // Botón para descargar claves
+        const downloadButton = document.createElement('button');
+        downloadButton.innerHTML = 'Descargar Claves';
+        downloadButton.onclick = function() {
+            downloadKey(privateKeyPem, 'private_key.pem', 'Descargar clave privada');
+            downloadKey(publicKeyPem, 'public_key.pem', 'Descargar clave pública');
+        };
+
+        document.body.appendChild(downloadButton);
+    </script>
+</body>
+</html>

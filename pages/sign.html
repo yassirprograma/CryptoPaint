@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firma y Verificación con Claves ECDSA</title>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/elliptic/6.5.3/elliptic.min.js"></script>    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="bg-gray-800 py-6">
+        <div></div>
+        <div class="container flex justify-center items-center px-6">
+              <p id="" class="text-center text-4xl text-white">CryptoPaint</p>                                                      
+        </div>            
+        
+        
+    </nav>
+
+
+
+
+  
+    <main>                        
+            <div id="panel1" class="bg-blue-100  py-8 px-8 mx-10 mt-10 mb-20 rouded-md">                  
+                <h1 class="text-2xl">Instrucciones para verificación de la firma:</h1>
+                <h2 class="text-1xl">1. Ingrese la llave pública obtenida</h2>
+                <h2 class="text-1xl">2. Ingrese la firma obtenida</h2>
+                <h2 class="text-1xl">3. Ingrese el archivo que se firmó</h2>
+            
+                <script>
+                    // Algoritmo de curva elíptica (ECDSA)
+                    const curveName = 'secp256k1';
+                    // Crear instancia de la curva elíptica
+                    const ec = new elliptic.ec(curveName);
+            
+                    let fileToSignContent; // Variable para almacenar el contenido del archivo firmado
+            
+                    // Función para dar formato PEM a una firma
+                    function formatPEMSignature(signature) {
+                        return `-----BEGIN ECDSA SIGNATURE-----\n${signature}\n-----END ECDSA SIGNATURE-----`;
+                    }
+            
+                    // Función para dar formato PEM
+                    function formatPEM(type, keyData) {
+                        const header = `-----BEGIN ${type}-----`;
+                        const footer = `-----END ${type}-----`;
+                        const formattedKey = `${header}\n${keyData}\n${footer}`;
+                        return formattedKey;
+                    }
+            
+                    // Función para descargar un archivo
+                    function downloadKey(data, filename, label) {
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = URL.createObjectURL(data);
+                        downloadLink.download = filename;
+                        downloadLink.innerHTML = label;
+            
+                        // Agregar el enlace al cuerpo del documento
+                        document.body.appendChild(downloadLink);
+            
+                        // Simular clic en el enlace
+                        downloadLink.click();
+            
+                        // Eliminar el enlace después de la descarga
+                        document.body.removeChild(downloadLink);
+                    }
+            
+                    // Función para cargar un archivo y verificar la firma
+                    function handleVerify() {
+                        const publicKeyFileInput = document.createElement('input');
+                        publicKeyFileInput.type = 'file';
+                        publicKeyFileInput.accept = '.pem';
+                        publicKeyFileInput.addEventListener('change', function(event) {
+                            const publicKeyFile = event.target.files[0];
+                            if (publicKeyFile) {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    const publicKeyPem = e.target.result.trim();
+            
+                                    const signatureFileInput = document.createElement('input');
+                                    signatureFileInput.type = 'file';
+                                    signatureFileInput.accept = '.pem';
+                                    signatureFileInput.addEventListener('change', function(event) {
+                                        const signatureFile = event.target.files[0];
+                                        if (signatureFile) {
+                                            const signatureReader = new FileReader();
+                                            signatureReader.onload = function(signatureEvent) {
+                                                const signaturePem = signatureEvent.target.result.trim();
+            
+                                                // Preguntar al usuario que cargue el archivo firmado
+                                                const fileToSignInput = document.createElement('input');
+                                                fileToSignInput.type = 'file';
+                                                fileToSignInput.addEventListener('change', function(fileEvent) {
+                                                    const fileToSign = fileEvent.target.files[0];
+                                                    if (fileToSign) {
+                                                        const fileReader = new FileReader();
+                                                        fileReader.onload = function(fileReaderEvent) {
+                                                            fileToSignContent = fileReaderEvent.target.result;
+            
+                                                            // Verificar la firma con la clave pública
+                                                            verifySignature(signaturePem, publicKeyPem, fileToSignContent);
+                                                        };
+            
+                                                        fileReader.readAsText(fileToSign);
+                                                    }
+                                                });
+            
+                                                // Simular clic en el botón de carga de archivo firmado
+                                                fileToSignInput.click();
+                                            };
+            
+                                            signatureReader.readAsText(signatureFile);
+                                        }
+                                    });
+            
+                                    // Simular clic en el botón de carga de firma
+                                    signatureFileInput.click();
+                                };
+            
+                                reader.readAsText(publicKeyFile);
+                            }
+                        });
+            
+                        // Simular clic en el botón de carga de clave pública
+                        publicKeyFileInput.click();
+                    }
+            
+                    // Función para manejar el evento de firma
+                    function handleSign() {
+                        const privateKeyFileInput = document.createElement('input');
+                        privateKeyFileInput.type = 'file';
+                        privateKeyFileInput.accept = '.pem';
+                        privateKeyFileInput.addEventListener('change', function(event) {
+                            const privateKeyFile = event.target.files[0];
+                            if (privateKeyFile) {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    const privateKeyPem = e.target.result.trim();
+            
+                                    const fileToSignInput = document.createElement('input');
+                                    fileToSignInput.type = 'file';
+                                    fileToSignInput.addEventListener('change', function(event) {
+                                        const fileToSign = event.target.files[0];
+                                        if (fileToSign) {
+                                            signFile(fileToSign, privateKeyPem);
+                                        }
+                                    });
+            
+                                    // Simular clic en el botón de carga de archivo a firmar
+                                    fileToSignInput.click();
+                                };
+            
+                                reader.readAsText(privateKeyFile);
+                            }
+                        });
+            
+                        // Simular clic en el botón de carga de clave privada
+                        privateKeyFileInput.click();
+                    }
+            
+                    // Función para firmar un archivo
+                    function signFile(file, privateKeyPem) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const fileContent = e.target.result; // Cargar el contenido del archivo
+            
+                            // Firma del contenido del archivo con la clave privada
+                            const signature = signMessage(fileContent, privateKeyPem);
+            
+                            // Crear un Blob con la firma
+                            const signatureBlob = new Blob([formatPEMSignature(signature)], { type: 'text/plain' });
+            
+                            // Descargar la firma en formato PEM
+                            downloadKey(signatureBlob, `signature.pem`, 'Descargar firma');
+                        };
+            
+                        reader.readAsText(file);
+                    }
+            
+                    // Función para firmar un mensaje
+                    function signMessage(message, privateKeyPem) {
+                        const privateKeyHex = privateKeyPem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g, '');
+                        const key = ec.keyFromPrivate(privateKeyHex, 'hex');
+                        const signature = key.sign(message);
+                        return signature.toDER('hex');
+                    }
+            
+                    // Función para verificar una firma
+                    function verifySignature(signaturePem, publicKeyPem, file) {
+                        const signatureHex = signaturePem.replace(/-----BEGIN ECDSA SIGNATURE-----|-----END ECDSA SIGNATURE-----|\s/g, '');
+            
+                        // Verificar la firma con la clave pública
+                        const publicKeyHex = publicKeyPem.replace(/-----BEGIN PUBLIC KEY-----|-----END PUBLIC KEY-----|\s/g, '');
+                        const key = ec.keyFromPublic(publicKeyHex, 'hex');
+                        const isSignatureValid = key.verify(file, signatureHex);
+            
+                        alert('¿La firma es válida? ' + isSignatureValid);
+                    }
+            
+                    
+                    const verifyButton = document.createElement('button');
+                    verifyButton.innerHTML = 'Verificar';
+                    verifyButton.setAttribute("class","bg-blue-300 text-center w-60 mt-5 p-2 rounded-full");                    
+                    verifyButton.onclick = handleVerify;
+                    document.getElementById("panel1").appendChild(verifyButton);
+                    
+                </script>
+                            
+            </div>
+    </main>
+
+
+
+    <footer class="flex bg-gray-800 px-8 py-20 items-center justify-center">            
+        <p class="text-center mx-8 text-white">Elaborado por: </p>
+        <ul>
+              <li>
+                    <p class="text-center mx-8 text-white">Fuentes García Kevin Yassir</p>
+              </li>
+              <li>
+                    <p class="text-center mx-8 text-white">Guerrero Zorza Erick Edmundo</p>
+              </li>
+              <li>
+                    <p class="text-center mx-8 text-white">Rosiles Hidalgo Emanuel</p>
+              </li>
+        </ul>            
+    </footer>
+
+  
+
+
+</body>
+</html>

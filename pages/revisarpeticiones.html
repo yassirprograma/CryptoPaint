@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Plantilla</title>
+      <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+      
+      <!-- CryptoJS -->
+      <script src="../js/CryptoJS/src/core.js"></script> <script src="../js/CryptoJS/src/lib-typedarrays.js"></script> <script src="../js/CryptoJS/src/x64-core.js"></script> <script src="../js/CryptoJS/src/enc-utf16.js"></script>
+      <script src="../js/CryptoJS/src/enc-base64.js"></script><script src="../js/CryptoJS/src/enc-base64url.js"></script><script src="../js/CryptoJS/src/md5.js"></script>
+      <script src="../js/CryptoJS/src/sha1.js"></script><script src="../js/CryptoJS/src/sha256.js"></script><script src="../js/CryptoJS/src/sha224.js"></script>
+      <script src="../js/CryptoJS/src/sha512.js"></script><script src="../js/CryptoJS/src/sha384.js"></script><script src="../js/CryptoJS/src/sha3.js"></script>
+      <script src="../js/CryptoJS/src/ripemd160.js"></script><script src="../js/CryptoJS/src/hmac.js"></script><script src="../js/CryptoJS/src/pbkdf2.js"></script>
+      <script src="../js/CryptoJS/src/evpkdf.js"></script><script src="../js/CryptoJS/src/cipher-core.js"></script><script src="../js/CryptoJS/src/mode-cfb.js"></script>
+      <script src="../js/CryptoJS/src/mode-ctr.js"></script><script src="../js/CryptoJS/src/mode-ofb.js"></script><script src="../js/CryptoJS/src/mode-ecb.js"></script>
+      <script src="../js/CryptoJS/src/pad-ansix923.js"></script><script src="../js/CryptoJS/src/pad-iso10126.js"></script><script src="../js/CryptoJS/src/pad-zeropadding.js"></script>
+      <script src="../js/CryptoJS/src/pad-iso97971.js"></script><script src="../js/CryptoJS/src/pad-nopadding.js"></script><script src="../js/CryptoJS/src/rc4.js"></script>
+      <script src="../js/CryptoJS/src/rabbit.js"></script><script src="../js/CryptoJS/src/rabbit-legacy.js"></script><script src="../js/CryptoJS/src/aes.js"></script><script src="../js/CryptoJS/src/tripledes.js"></script>
+</head>
+<body>
+      <nav class="bg-gray-800 py-6">
+            <div></div>
+            <div class="container flex justify-center items-center px-6">
+                  <p id="" class="text-center text-4xl text-white">CryptoPaint</p>                                                      
+            </div>            
+
+            <div class="container  flex justify-center items-center mt-2">
+                  <div class="px-6">
+                        <p id="titulodivtop" class="text-center text-2xl text-white">Plantilla</p>                                                      
+                  </div>            
+                  <div class="  text-xl text-blue-500">
+                        <a id="btncerrarsesion" href="../index.html" >Cerrar sesión</a>
+                  </div>
+            </div>
+            
+      </nav>
+
+
+      <main>                        
+        <div id="panel1" class="flex flex-col items-center bg-blue-100  py-8 px-8 mx-10 mt-10 mb-20 rouded-md">                  
+            <h1 class="text-2xl  "> Peticiones de los clientes</h1>                           
+
+            <div class=" container  flex flex-col items-center mt-10 ">
+                <p>Detalles de las peticiones</p>
+
+                <div class="Peticiones m-10 flex flex-col items-center bg-blue-200 p-10 ">
+                        
+                    <label for="selectPeticion">Seleccione el Título de la peticion de la que desea revelar la imagen de ejemplo y/o la obra resultado</label>
+                    <select name="selectPeticion" id="selectPeticion">
+                      <option value="none" selected>...</option>
+                    </select><br><br>
+
+                    <label class="mt-14" for="privatekey">Importar mi llave privada</label>
+                      <input type="File" id="privatekey" name="privatekey">
+
+                    <div class="flex">
+                        <div  class="flex-shrink-0 m-10 w-72" >
+                            <h2 class="text-center">[Img ejemplo]:</h2>        
+                            <div id="imgejemplo">
+
+                            </div>                    
+                        </div>
+    
+                        <div class="flex-shrink-0 m-10 w-72" >
+                            <h2 class="text-center">[Img resultado]:</h2>
+                            <div id="imgresultado">
+
+                            </div>               
+                        </div>
+                    </div>
+                                        
+                    <button class="bg-blue-300 text-center w-60 mt-5 p-2 rounded-full" type="button" id="Descargar"  onclick="cargarImagenes()" > Revelar la obra </button>
+                    <a class="bg-blue-300 text-center w-60 mt-5 p-2 rounded-full" href="sign.html" target="_blank" rel="noopener noreferrer">Ir a verificar firma</a>
+                </div>
+            
+                
+                
+                <div class="mt-10" >
+                  <p class="text-center">Peticiones pendientes</p>    
+                    <table class="text-center m-5 border border-black" >                            
+                      <tbody id="tablapeticionespendientes">
+                          <tr >
+                              <th class="border border-black">id</th>
+                              <th class="border border-black">Titulo petición</th>
+                              <th class="border border-black">Usuario</th>
+                              <th class="border border-black">Fecha de solicitud</th>
+                              <th class="border border-black">Estatus</th>
+                          </tr>
+                          
+                      </tbody>
+                        
+                       
+                      </table>
+                </div>
+                
+                
+                
+                <div class="mt-10">
+                  <p class="text-center">Peticiones resueltas</p>    
+                    <table class="text-center m-5 border border-black">
+                      <tbody id="tablapeticionesantiguas">
+                          <tr>
+                              <th class="border border-black">id</th>
+                              <th class="border border-black">Titulo petición</th>
+                              <th class="border border-black">Usuario</th>
+                              <th class="border border-black">Fecha de solicitud</th>
+                              <th class="border border-black">Estatus</th>
+                          </tr>
+                          
+                      </tbody>
+                      </table>
+                </div>
+
+
+             </div>
+        </div>
+
+      </main>
+
+
+
+
+
+      <footer class="flex bg-gray-800 px-8 py-20 items-center justify-center">            
+            <p class="text-center mx-8 text-white">Elaborado por: </p>
+            <ul>
+                  <li>
+                        <p class="text-center mx-8 text-white">Fuentes García Kevin Yassir</p>
+                  </li>
+                  <li>
+                        <p class="text-center mx-8 text-white">Guerrero Zorza Erick Edmundo</p>
+                  </li>
+                  <li>
+                        <p class="text-center mx-8 text-white">Rosiles Hidalgo Emanuel</p>
+                  </li>
+            </ul>            
+        </footer>
+
+      <script>            
+            username=String(sessionStorage.getItem('username'))
+            if(sessionStorage.length ==0 || sessionStorage.getItem('admin')==0){                                         
+                  window.location.href ='../index.html';                                                       
+            }
+            
+            let divtop=document.getElementById('titulodivtop');
+            divtop.innerText="ADMIN : : "+username            
+
+            var miEnlace = document.getElementById('btncerrarsesion');            
+            miEnlace.addEventListener('click', function(event) {                  
+                  sessionStorage.clear(); //Borrar toda info antes que nada
+                  window.location.href ='../index.html'; 
+            });
+      </script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/elliptic/6.5.3/elliptic.min.js"></script>
+      <script src="../js/shared_key_and_aes.js"></script>
+      <script src="../js/revisarpeticiones.js"></script>
+</body>
+</html>

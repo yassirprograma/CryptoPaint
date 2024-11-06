@@ -1,0 +1,31 @@
+Para el registro:
+    Generar las llaves, descargaar el par y subir la pública al servidor
+
+Para cuando se restablece contraseña:
+    Generar las llaves, descargaar el par y subir la pública al servidor
+
+Para cuando se solicita nueva obra:
+    Pedir la llave privada ECDH del usuario 
+    Pedir la llave privada ECDSA del usuario 
+    Descargar desde el server la pública ECDH del admin
+    Obtener secreto compartido
+    Cifrar y subir
+
+Para cuando se resuelve nueva obra:
+    Pedir la llave privada ECDH del admin 
+    Pedir la llave privada ECDSA del admin
+    Descargar desde el server la pública ECDH del admin
+    Obtener secreto compartido
+    Cifrar y subir
+
+Para cuando el usuario quiere revelar obra:
+    Pedir la llave privada ECDH
+    Descargar desde el server la pública ECDH del admin
+    Obtener secreto compartido
+    Descifrar y mostrar imagen
+
+Para cuando el admin quiere revelar obra:
+    Pedir la llave privada ECDH
+    Descargar desde el server la pública ECDH del admin
+    Obtener secreto compartido
+    Descifrar y mostrar imagen
